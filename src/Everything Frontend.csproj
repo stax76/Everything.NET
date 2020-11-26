@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>Everything.ico</ApplicationIcon>
+    <Authors>Frank Skare (stax76)</Authors>
+    <Copyright>Copyright (C) 2020 Frank Skare (stax76)</Copyright>
+    <Product>Everything Frontend</Product>
+    <Description>Everything Frontend with dark mode.</Description>
+    <AssemblyName>EverythingFrontend</AssemblyName>
+    <RootNamespace>EverythingFrontend</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WPFThemes.DarkBlend" Version="1.0.8" />
+  </ItemGroup>
+
+</Project>
