@@ -24,24 +24,22 @@ namespace EverythingFrontend
             Everything_Query(true);
             uint count = Everything_GetNumResults();
 
-            if (count > 100)
-                count = 100;
+            if (count > 1000)
+                count = 1000;
 
             for (uint i = 0; i < count; i++)
             {
-                try {
-                    Everything_GetResultFullPathName(i, sb, (uint)sb.Capacity);
-                    string path = sb.ToString();
-                    Everything_GetResultSize(i, out var size);
-                    Everything_GetResultDateModified(i, out var fileTime);
-                    
-                    items.Add(new Item() {
-                        Directory = Path.GetDirectoryName(path),
-                        Name = Path.GetFileName(path),
-                        Size = size,
-                        Date = DateTime.FromFileTime(fileTime)
-                    });
-                } catch {}
+                Everything_GetResultFullPathName(i, sb, (uint)sb.Capacity);
+                string path = sb.ToString();
+                Everything_GetResultSize(i, out var size);
+                Everything_GetResultDateModified(i, out var fileTime);
+                
+                items.Add(new Item() {
+                    Directory = Path.GetDirectoryName(path),
+                    Name = Path.GetFileName(path),
+                    Size = size,
+                    Date = DateTime.FromFileTime(fileTime)
+                });
             }
             return items;
         }
@@ -60,7 +58,7 @@ namespace EverythingFrontend
         [DllImport("Everything.dll")]
         static extern void Everything_SetSort(UInt32 dwSortType);
 
-        [DllImport("Everything.dll", CharSet = CharSet.Unicode)]
+        [DllImport("Everything.dll")]
         static extern bool Everything_Query(bool bWait);
 
         [DllImport("Everything.dll", CharSet = CharSet.Unicode)]

@@ -1,14 +1,30 @@
 ﻿
-using System;
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
-using System.Text;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace EverythingFrontend
 {
     class ViewModel : ViewModelBase
     {
-        public ObservableCollection<Item> Items { get; } = new ObservableCollection<Item>();
+        TypeAssistant TypeAssistant;
+
+        public ViewModel()
+        {
+            TypeAssistant = new TypeAssistant();
+            TypeAssistant.Idled += TypeAssistant_Idled;
+            Task.Run(() => Update(""));
+        }
+
+        private List<Item> ItemsValue;
+
+        public List<Item> Items {
+            get => ItemsValue;
+            set {
+                ItemsValue = value;
+                OnPropertyChanged();
+            }
+        }
 
         string SearchTextValue;
 
@@ -16,16 +32,16 @@ namespace EverythingFrontend
             get => SearchTextValue;
             set {
                 SearchTextValue = value;
-                Update();
+                TypeAssistant.TextChanged(value);
             }
         }
 
-        void Update()
-        {
-            Items.Clear();
+        void TypeAssistant_Idled(string text) => Update(text);
 
-            foreach (var item in Model.GetItems(SearchText))
-                Items.Add(item);
+        void Update(string text)
+        {
+            List<Item> items = Model.GetItems(text);
+            Application.Current.Dispatcher.Invoke(() => Items = items);
         }
     }
 }
