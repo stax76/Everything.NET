@@ -1,6 +1,5 @@
 ﻿
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace EverythingFrontend
@@ -13,7 +12,6 @@ namespace EverythingFrontend
         {
             TypeAssistant = new TypeAssistant();
             TypeAssistant.Idled += TypeAssistant_Idled;
-            Task.Run(() => Update(""));
         }
 
         private List<Item> ItemsValue;
