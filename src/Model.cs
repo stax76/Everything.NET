@@ -12,7 +12,10 @@ namespace EverythingFrontend
         public static List<Item> GetItems(string searchText)
         {
             List<Item> items = new List<Item>();
-            StringBuilder sb = new StringBuilder(500);
+
+            if (searchText.Length < 2)
+                return items;
+
             Everything_SetSearch(searchText);
          
             Everything_SetRequestFlags(
@@ -24,24 +27,25 @@ namespace EverythingFrontend
             Everything_Query(true);
             uint count = Everything_GetNumResults();
 
-            if (count > 1000)
-                count = 1000;
+            for (uint i = 0; i < count; i++)             
+                items.Add(new Item(i));
 
-            for (uint i = 0; i < count; i++)
-            {
-                Everything_GetResultFullPathName(i, sb, (uint)sb.Capacity);
-                string path = sb.ToString();
-                Everything_GetResultSize(i, out var size);
-                Everything_GetResultDateModified(i, out var fileTime);
-                
-                items.Add(new Item() {
-                    Directory = Path.GetDirectoryName(path),
-                    Name = Path.GetFileName(path),
-                    Size = size,
-                    Date = DateTime.FromFileTime(fileTime)
-                });
-            }
             return items;
+        }
+
+        public static void Init(uint index, ref string name, ref string directory, ref long size, ref DateTime date)
+        {
+            StringBuilder sb = new StringBuilder(500);
+            Everything_GetResultFullPathName(index, sb, (uint)sb.Capacity);
+            string path = sb.ToString();
+            Everything_GetResultSize(index, out var size2);
+            Everything_GetResultDateModified(index, out var fileTime);
+            directory = Path.GetDirectoryName(path);
+            name = Path.GetFileName(path);
+            size = size2;
+
+            if (fileTime != -1)
+                date = DateTime.FromFileTime(fileTime);
         }
 
         const int EVERYTHING_REQUEST_FILE_NAME     = 0x00000001;

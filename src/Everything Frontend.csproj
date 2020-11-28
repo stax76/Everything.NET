@@ -3,12 +3,13 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
+    <OutDir>$(SolutionDir)\bin</OutDir>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Everything.ico</ApplicationIcon>
     <Authors>Frank Skare (stax76)</Authors>
     <Copyright>Copyright (C) 2020 Frank Skare (stax76)</Copyright>
     <Product>Everything Frontend</Product>
-    <Description>Everything Frontend with dark mode.</Description>
+    <Description>Simple Everything frontend with dark mode.</Description>
     <AssemblyName>EverythingFrontend</AssemblyName>
     <RootNamespace>EverythingFrontend</RootNamespace>
   </PropertyGroup>
