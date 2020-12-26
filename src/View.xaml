@@ -11,7 +11,9 @@
         Title="Everything.NET"
         Height="450"
         Width="800"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        Activated="Window_Activated"
+        SizeChanged="Window_SizeChanged">
 
     <Window.Resources>
         <local:SizeConverter x:Key="SizeConverter" />
@@ -29,7 +31,8 @@
                  Margin="20"
                  Padding="2"
                  FontSize="14"
-                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" >
+                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                 PreviewKeyDown="SearchTextBox_PreviewKeyDown" >
         </TextBox>
 
         <DataGrid AutoGenerateColumns="False"
@@ -42,8 +45,8 @@
                   MouseRightButtonUp="DataGrid_MouseRightButtonUp">
             
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Width="250" Binding="{Binding Name}" />
-                <DataGridTextColumn Header="Directory" Width="300" Binding="{Binding Directory}" />
+                <DataGridTextColumn x:Name="NameColumn" Header="Name" Width="250" Binding="{Binding Name}" />
+                <DataGridTextColumn x:Name="DirectoryColumn" Header="Directory" Width="300" Binding="{Binding Directory}" />
                 <DataGridTextColumn Header="Size" Binding="{Binding Size, Converter={StaticResource SizeConverter}}" />
                 <DataGridTextColumn Header="Modified Date" Binding="{Binding Date, StringFormat=\{0:g\}, ConverterCulture={x:Static glob:CultureInfo.CurrentCulture}}" />
             </DataGrid.Columns>

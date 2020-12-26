@@ -13,6 +13,7 @@
     <Description>Everything frontend with dark UI.</Description>
     <AssemblyName>EverythingNET</AssemblyName>
     <RootNamespace>EverythingNET</RootNamespace>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

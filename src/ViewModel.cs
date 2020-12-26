@@ -34,11 +34,14 @@ namespace EverythingNET
             }
         }
 
-        void TypeAssistant_Idled(string text) => Update(text);
-
-        void Update(string text)
+        void TypeAssistant_Idled(string text)
         {
-            List<Item> items = Model.GetItems(text);
+            Update();
+        }
+
+        public void Update()
+        {
+            List<Item> items = Model.GetItems(SearchText);
             Application.Current.Dispatcher.Invoke(() => Items = items);
         }
     }
