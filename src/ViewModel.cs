@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 
-namespace EverythingFrontend
+namespace EverythingNET
 {
     class ViewModel : ViewModelBase
     {

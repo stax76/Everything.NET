@@ -1,7 +1,7 @@
 ﻿
 using System.Windows;
 
-namespace EverythingFrontend
+namespace EverythingNET
 {
     public partial class App : Application
     {

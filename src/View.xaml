@@ -1,14 +1,14 @@
 ﻿
-<Window x:Class="EverythingFrontend.View"
+<Window x:Class="EverythingNET.View"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:EverythingFrontend"
+        xmlns:local="clr-namespace:EverythingNET"
         xmlns:glob="clr-namespace:System.Globalization;assembly=mscorlib"
         Style="{StaticResource {x:Type Window}}"
         mc:Ignorable="d"
-        Title="Everything"
+        Title="Everything.NET"
         Height="450"
         Width="800"
         WindowStartupLocation="CenterScreen">
@@ -31,11 +31,15 @@
                  FontSize="14"
                  Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" >
         </TextBox>
-        
+
         <DataGrid AutoGenerateColumns="False"
                   Grid.Row="1"
                   IsReadOnly="True"
-                  ItemsSource="{Binding Items}" MouseDoubleClick="DataGrid_MouseDoubleClick">
+                  SelectionMode="Single"
+                  ItemsSource="{Binding Items}"
+                  MouseDoubleClick="DataGrid_MouseDoubleClick"
+                  MouseRightButtonDown="DataGrid_MouseRightButtonDown"
+                  MouseRightButtonUp="DataGrid_MouseRightButtonUp">
             
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Width="250" Binding="{Binding Name}" />

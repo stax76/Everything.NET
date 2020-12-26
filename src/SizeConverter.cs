@@ -3,7 +3,7 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace EverythingFrontend
+namespace EverythingNET
 {
     public class SizeConverter : IValueConverter
     {

@@ -1,7 +1,7 @@
 ﻿
 using System;
 
-namespace EverythingFrontend
+namespace EverythingNET
 {
     class Item
     {
