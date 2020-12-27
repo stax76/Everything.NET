@@ -3,14 +3,17 @@
 
 Voidtools Everything frontend with dark mode.
 
+
 ### Screenshot
 
 ![-](Screenshot.png)
+
 
 ### Requirements
 
 - [Voidtools Everything installation](https://www.voidtools.com/downloads)
 - [.NET 5 Desktop Runtime installation](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-5.0.0-windows-x64-installer)
+
 
 ### Usage
 
@@ -24,9 +27,6 @@ Right-click opens the files native shell context menu.
 
 F1 key shows the about dialog.
 
-### Theme
-
-https://github.com/DanPristupov/WpfExpressionBlendTheme
 
 ### Download
 
