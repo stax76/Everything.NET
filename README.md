@@ -27,6 +27,9 @@ Right-click opens the files native shell context menu.
 
 F1 key shows the about dialog.
 
+Up/Down key navigates the main list.
+
+Shift+F10 or Menu key show the context menu.
 
 ### Download
 

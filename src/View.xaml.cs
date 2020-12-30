@@ -52,11 +52,14 @@ namespace EverythingNET
 
         void DataGrid_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
-            DataGrid grid = sender as DataGrid;
+            ShowMenu(PointToScreen(Mouse.GetPosition(this)));
+        }
 
-            if (grid.SelectedItem != null)
+        void ShowMenu(Point screenPos)
+        {
+            if (DG.SelectedItem != null)
             {
-                Item item = grid.SelectedItem as Item;
+                Item item = DG.SelectedItem as Item;
                 string file = Path.Combine(item.Directory, item.Name);
 
                 if (File.Exists(file))
@@ -64,7 +67,6 @@ namespace EverythingNET
                     ShellContextMenu menu = new ShellContextMenu();
                     FileInfo[] files = { new FileInfo(file) };
                     IntPtr handle = new WindowInteropHelper(this).Handle;
-                    Point screenPos = PointToScreen(Mouse.GetPosition(this));
                     System.Drawing.Point screenPos2 = new System.Drawing.Point((int)screenPos.X, (int)screenPos.Y);
                     menu.ShowContextMenu(handle, files, screenPos2);
                     Task.Run(() => {
@@ -103,15 +105,9 @@ namespace EverythingNET
                 RegistryHelp.SetValue(RegistryHelp.ApplicationKey, "LastText", ViewModel.SearchText);
         }
 
-        protected override void OnStateChanged(EventArgs e)
-        {
-            base.OnStateChanged(e);
-
-        }
-
         void SearchTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Up)
+            if (e.Key == Key.Up && SearchTextBox.Text == "")
             {
                 string last = RegistryHelp.GetString(RegistryHelp.ApplicationKey, "LastText");
 
@@ -121,6 +117,50 @@ namespace EverythingNET
                     SearchTextBox.CaretIndex = 1000;
                 }
             }
+
+            if (DG.Items.Count > 0)
+            {
+                if (e.Key == Key.Up)
+                {
+                    int index = DG.SelectedIndex;
+                    index--;
+
+                    if (index < 0)
+                        index = 0;
+
+                    DG.SelectedIndex = index;
+                }
+
+                if (e.Key == Key.Down)
+                {
+                    int index = DG.SelectedIndex;
+                    index++;
+
+                    if (index > DG.Items.Count - 1)
+                        index = DG.Items.Count - 1;
+
+                    DG.SelectedIndex = index;
+                }
+            }
+
+            if (e.Key == Key.Apps)
+            {
+                Application.Current.Dispatcher.InvokeAsync(() => {
+                    ShowMenu(PointToScreen(new Point(0d, 0d)));
+                });
+            }
+        }
+
+        IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if (msg == 0x104 && (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)))
+            {
+                Application.Current.Dispatcher.InvokeAsync(() => {
+                    ShowMenu(PointToScreen(new Point(0d, 0d)));
+                });
+            }
+
+            return IntPtr.Zero;
         }
 
         void Window_Activated(object sender, EventArgs e)
@@ -133,6 +173,12 @@ namespace EverythingNET
         {
             NameColumn.Width = ActualWidth * 0.25;
             DirectoryColumn.Width = ActualWidth * 0.5;
+        }
+
+        void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
+            source.AddHook(new HwndSourceHook(WndProc));
         }
     }
 }

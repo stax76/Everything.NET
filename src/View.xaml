@@ -13,7 +13,7 @@
         Width="800"
         WindowStartupLocation="CenterScreen"
         Activated="Window_Activated"
-        SizeChanged="Window_SizeChanged">
+        SizeChanged="Window_SizeChanged" Loaded="Window_Loaded">
 
     <Window.Resources>
         <local:SizeConverter x:Key="SizeConverter" />
@@ -31,14 +31,17 @@
                  Margin="20"
                  Padding="2"
                  FontSize="14"
+                 ContextMenu="{x:Null}"
                  Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                  PreviewKeyDown="SearchTextBox_PreviewKeyDown" >
         </TextBox>
 
-        <DataGrid AutoGenerateColumns="False"
+        <DataGrid Name="DG"
+                  AutoGenerateColumns="False"
                   Grid.Row="1"
                   IsReadOnly="True"
                   SelectionMode="Single"
+                  IsSynchronizedWithCurrentItem="True"
                   ItemsSource="{Binding Items}"
                   MouseDoubleClick="DataGrid_MouseDoubleClick"
                   MouseRightButtonDown="DataGrid_MouseRightButtonDown"

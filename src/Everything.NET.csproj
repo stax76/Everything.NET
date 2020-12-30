@@ -6,14 +6,14 @@
     <OutDir>$(SolutionDir)\bin</OutDir>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
-    <ApplicationIcon>Everything.ico</ApplicationIcon>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
     <Authors>Frank Skare (stax76)</Authors>
     <Copyright>Copyright (C) 2020 Frank Skare (stax76)</Copyright>
     <Product>Everything.NET</Product>
     <Description>Everything frontend with dark UI.</Description>
     <AssemblyName>EverythingNET</AssemblyName>
     <RootNamespace>EverythingNET</RootNamespace>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
