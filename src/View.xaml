@@ -33,7 +33,8 @@
                  FontSize="14"
                  ContextMenu="{x:Null}"
                  Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                 PreviewKeyDown="SearchTextBox_PreviewKeyDown" >
+                 PreviewKeyDown="SearchTextBox_PreviewKeyDown"
+                 PreviewMouseRightButtonDown="SearchTextBox_PreviewMouseRightButtonDown" PreviewMouseRightButtonUp="SearchTextBox_PreviewMouseRightButtonUp" >
         </TextBox>
 
         <DataGrid Name="DG"

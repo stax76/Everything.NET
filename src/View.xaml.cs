@@ -153,6 +153,7 @@ namespace EverythingNET
 
         IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
+            // WM_SYSKEYDOWN
             if (msg == 0x104 && (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)))
             {
                 Application.Current.Dispatcher.InvokeAsync(() => {
@@ -179,6 +180,16 @@ namespace EverythingNET
         {
             HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
             source.AddHook(new HwndSourceHook(WndProc));
+        }
+
+        void SearchTextBox_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            SearchTextBox.Text = Clipboard.GetText();
+        }
+
+        void SearchTextBox_PreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            SearchTextBox.SelectionStart = SearchTextBox.Text.Length;
         }
     }
 }
