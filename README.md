@@ -12,7 +12,7 @@ Voidtools Everything frontend with dark mode.
 ### Requirements
 
 - [Voidtools Everything installation](https://www.voidtools.com/downloads)
-- [.NET 5 Desktop Runtime installation](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-5.0.0-windows-x64-installer)
+- [.NET 5 Desktop Runtime installation](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-5.0.2-windows-x64-installer)
 
 
 ### Usage
