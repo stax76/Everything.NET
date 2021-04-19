@@ -9,11 +9,6 @@ using System.Threading;
 
 namespace Shell
 {
-    /// ShellContextMenu menu = new ShellContextMenu();
-    /// FileInfo[] files = new FileInfo[1];
-    /// files[0] = new FileInfo(@"c:\windows\notepad.exe");
-    /// menu.ShowContextMenu(this.Handle, files, Cursor.Position);
-
     public class ShellContextMenu
     {
         public ShellContextMenu()

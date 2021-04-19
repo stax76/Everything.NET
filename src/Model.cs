@@ -19,39 +19,43 @@ namespace EverythingNET
             Everything_SetSearch(searchText);
          
             Everything_SetRequestFlags(
-                EVERYTHING_REQUEST_FILE_NAME |
-                EVERYTHING_REQUEST_PATH | 
+                EVERYTHING_REQUEST_FULL_PATH_AND_FILE_NAME |
                 EVERYTHING_REQUEST_DATE_MODIFIED | 
                 EVERYTHING_REQUEST_SIZE);
-       
+
+            Everything_SetMatchPath(true);
             Everything_Query(true);
             uint count = Everything_GetNumResults();
 
-            for (uint i = 0; i < count; i++)             
-                items.Add(new Item(i));
+            for (uint i = 0; i < count; i++)
+            {
+                Everything_GetResultSize(i, out var size);
+
+                if (size > -1)
+                    items.Add(new Item() { Index = i, Size = size });
+            }
 
             return items;
         }
 
-        public static void Init(uint index, ref string name, ref string directory, ref long size, ref DateTime date)
+        public static void Init(Item item)
         {
             StringBuilder sb = new StringBuilder(500);
-            Everything_GetResultFullPathName(index, sb, (uint)sb.Capacity);
+            Everything_GetResultFullPathName(item.Index, sb, (uint)sb.Capacity);
             string path = sb.ToString();
-            Everything_GetResultSize(index, out var size2);
-            Everything_GetResultDateModified(index, out var fileTime);
-            directory = Path.GetDirectoryName(path);
-            name = Path.GetFileName(path);
-            size = size2;
+            Everything_GetResultDateModified(item.Index, out var fileTime);
+            item.Directory = Path.GetDirectoryName(path);
+            item.Name = Path.GetFileName(path);
 
             if (fileTime != -1)
-                date = DateTime.FromFileTime(fileTime);
+                item.Date = DateTime.FromFileTime(fileTime);
+
+            item.WasInitialized = true;
         }
 
-        const int EVERYTHING_REQUEST_FILE_NAME     = 0x00000001;
-        const int EVERYTHING_REQUEST_PATH          = 0x00000002;
-        const int EVERYTHING_REQUEST_SIZE          = 0x00000010;
-        const int EVERYTHING_REQUEST_DATE_MODIFIED = 0x00000040;
+        const int EVERYTHING_REQUEST_FULL_PATH_AND_FILE_NAME = 0x00000004;
+        const int EVERYTHING_REQUEST_SIZE                    = 0x00000010;
+        const int EVERYTHING_REQUEST_DATE_MODIFIED           = 0x00000040;
 
         [DllImport("Everything.dll", CharSet = CharSet.Unicode)]
         static extern int Everything_SetSearch(string lpSearchString);
@@ -61,6 +65,9 @@ namespace EverythingNET
 
         [DllImport("Everything.dll")]
         static extern void Everything_SetSort(UInt32 dwSortType);
+
+        [DllImport("Everything.dll")]
+        static extern bool Everything_IsFileResult(UInt32 index);
 
         [DllImport("Everything.dll")]
         static extern bool Everything_Query(bool bWait);
@@ -76,5 +83,8 @@ namespace EverythingNET
 
         [DllImport("Everything.dll")]
         static extern UInt32 Everything_GetNumResults();
+
+        [DllImport("Everything.dll")]
+        static extern void Everything_SetMatchPath(bool bEnable);
     }
 }

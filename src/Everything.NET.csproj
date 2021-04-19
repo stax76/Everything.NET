@@ -8,13 +8,17 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
     <Authors>Frank Skare (stax76)</Authors>
-    <Copyright>Copyright (C) 2020 Frank Skare (stax76)</Copyright>
+    <Copyright>Copyright (C) 2020-2021 Frank Skare (stax76)</Copyright>
     <Product>Everything.NET</Product>
     <Description>Everything frontend with dark UI.</Description>
     <AssemblyName>EverythingNET</AssemblyName>
     <RootNamespace>EverythingNET</RootNamespace>
     <Version>1.2.0</Version>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\Changelog.md" Link="Changelog.md" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="WPFThemes.DarkBlend" Version="1.0.8" />

@@ -5,59 +5,42 @@ namespace EverythingNET
 {
     class Item
     {
-        public Item(uint index)
-        {
-            Index = index;
-        }
+        public uint Index { get; set; }
+        public long Size { get; set; }
+        public bool WasInitialized { get; set; }
 
-        string NameValue;
+        string _Name;
 
         public string Name {
             get {
                 if (!WasInitialized)
-                    Init();
-                return NameValue;
+                    Model.Init(this);
+                return _Name;
             }
+            set => _Name = value;
         }
 
-        string DirectoryValue;
+        string _Directory;
 
         public string Directory {
             get {
                 if (!WasInitialized)
-                    Init();
-                return DirectoryValue;
+                    Model.Init(this);
+                return _Directory;
             }
+            set => _Directory = value;
         }
 
-        long SizeValue;
 
-        public long Size {
-            get {
-                if (!WasInitialized)
-                    Init();
-                return SizeValue;
-            }
-        }
-
-        DateTime DateValue;
+        DateTime _Date;
 
         public DateTime Date {
             get {
                 if (!WasInitialized)
-                    Init();
-                return DateValue;
+                    Model.Init(this);
+                return _Date;
             }
-        }
-
-        public uint Index { get; }
-
-        bool WasInitialized;
-
-        void Init()
-        {
-            Model.Init(Index, ref NameValue, ref DirectoryValue, ref SizeValue, ref DateValue);
-            WasInitialized = true;
+            set => _Date = value;
         }
     }
 }

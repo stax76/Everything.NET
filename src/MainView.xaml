@@ -1,0 +1,113 @@
+﻿
+<Window
+    x:Class="EverythingNET.View"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="clr-namespace:EverythingNET"
+    xmlns:glob="clr-namespace:System.Globalization;assembly=mscorlib"
+    Style="{StaticResource {x:Type Window}}"
+    mc:Ignorable="d"
+    Title="Everything.NET"
+    Height="450"
+    Width="800"
+    WindowStartupLocation="CenterScreen"
+    Activated="Window_Activated"
+    SizeChanged="Window_SizeChanged"
+    Loaded="Window_Loaded">
+
+    <Window.Resources>
+        <local:SizeConverter x:Key="SizeConverter" />
+    </Window.Resources>
+
+    <Window.InputBindings>
+        <KeyBinding Gesture="F1" Command="{Binding ShowHelpCommand}"/>
+        
+        <KeyBinding
+            Gesture="F10"
+            Command="{Binding ShowContextMenuCommand}"
+            CommandParameter="{Binding ElementName=MainMenuTextBlock}"
+            />
+    </Window.InputBindings>
+    
+    <Grid FocusManager.FocusedElement="{Binding ElementName=SearchTextBox}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+       
+        <TextBox
+            Name="SearchTextBox"
+            Width="300"
+            Padding="2"
+            FontSize="14"
+            Grid.Row="1"
+            ContextMenu="{x:Null}"
+            Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+            PreviewKeyDown="SearchTextBox_PreviewKeyDown"
+            PreviewMouseRightButtonDown="SearchTextBox_PreviewMouseRightButtonDown"
+            PreviewMouseRightButtonUp="SearchTextBox_PreviewMouseRightButtonUp"
+            >
+        </TextBox>
+
+        <TextBlock
+            Name="MainMenuTextBlock"
+            Text="Menu"
+            Cursor="Hand"
+            Foreground="LightGray"
+            TextDecorations="Underline"
+            HorizontalAlignment="Right"
+            Margin="0,0,10,0"
+            Grid.Row="2"
+            >
+
+            <TextBlock.InputBindings>
+                <MouseBinding
+                    Command="{Binding ShowContextMenuCommand}"
+                    CommandParameter="{Binding ElementName=MainMenuTextBlock}"
+                    MouseAction="LeftClick"
+                    />
+            </TextBlock.InputBindings>
+
+            <TextBlock.ContextMenu>
+                <ContextMenu>
+                    <MenuItem
+                        Header="Help"
+                        InputGestureText="F1"
+                        Command="{Binding ShowHelpCommand}" />
+                </ContextMenu>
+            </TextBlock.ContextMenu>
+        </TextBlock>
+
+        <DataGrid
+            Name="MainDataGrid"
+            AutoGenerateColumns="False"
+            Grid.Row="3"
+            IsReadOnly="True"
+            SelectionMode="Single"
+            IsSynchronizedWithCurrentItem="True"
+            ItemsSource="{Binding Items}"
+            SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+            MouseRightButtonDown="DataGrid_MouseRightButtonDown"
+            MouseRightButtonUp="DataGrid_MouseRightButtonUp"
+            >
+            
+            <DataGrid.Columns>
+                <DataGridTextColumn x:Name="NameColumn" Header="Name" Width="250" Binding="{Binding Name}" />
+                <DataGridTextColumn x:Name="DirectoryColumn" Header="Directory" Width="300" Binding="{Binding Directory}" />
+                <DataGridTextColumn Header="Size" Binding="{Binding Size, Converter={StaticResource SizeConverter}}" />
+                <DataGridTextColumn Header="Modified Date" Binding="{Binding Date, StringFormat=\{0:g\}, ConverterCulture={x:Static glob:CultureInfo.CurrentCulture}}" />
+            </DataGrid.Columns>
+
+            <DataGrid.InputBindings>
+                <MouseBinding
+                    Command="{Binding ShowInExplorerCommand}"
+                    MouseAction="LeftDoubleClick"
+                    />
+            </DataGrid.InputBindings>
+        </DataGrid>
+    </Grid>
+</Window>

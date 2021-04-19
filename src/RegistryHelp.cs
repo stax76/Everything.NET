@@ -9,8 +9,8 @@ public class RegistryHelp
 
     public static void SetValue(string path, string name, object value)
     {
-        using (RegistryKey regKey = GetRootKey(path).CreateSubKey(path.Substring(5), RegistryKeyPermissionCheck.ReadWriteSubTree))
-            regKey.SetValue(name, value);
+        using RegistryKey regKey = GetRootKey(path).CreateSubKey(path.Substring(5), RegistryKeyPermissionCheck.ReadWriteSubTree);
+        regKey.SetValue(name, value);
     }
 
     public static string GetString(string path, string name, string defaultValue = "")
@@ -27,28 +27,24 @@ public class RegistryHelp
 
     public static object GetValue(string path, string name, object defaultValue = null)
     {
-        using (RegistryKey regKey = GetRootKey(path).OpenSubKey(path.Substring(5)))
-            return regKey == null ? null : regKey.GetValue(name, defaultValue);
+        using RegistryKey regKey = GetRootKey(path).OpenSubKey(path.Substring(5));
+        return regKey == null ? null : regKey.GetValue(name, defaultValue);
     }
 
     public static void RemoveKey(string path)
     {
-        try
-        {
+        try {
             GetRootKey(path).DeleteSubKeyTree(path.Substring(5), false);
-        }
-        catch { }
+        } catch { }
     }
 
     public static void RemoveValue(string path, string name)
     {
-        try
-        {
-            using (RegistryKey regKey = GetRootKey(path).OpenSubKey(path.Substring(5), true))
-                if (regKey != null)
-                    regKey.DeleteValue(name, false);
-        }
-        catch { }
+        try {
+            using RegistryKey regKey = GetRootKey(path).OpenSubKey(path.Substring(5), true);
+            if (regKey != null)
+                regKey.DeleteValue(name, false);
+        } catch { }
     }
 
     static RegistryKey GetRootKey(string path)

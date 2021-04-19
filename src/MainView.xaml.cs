@@ -17,24 +17,18 @@ namespace EverythingNET
 {
     public partial class View : Window
     {
-        ViewModel ViewModel;
+        public RoutedCommand SettingsCommand { get; } = new RoutedCommand();
+        public RoutedCommand ShowMenuCommand { get; } = new RoutedCommand();
+
+        MainViewModel ViewModel;
 
         public View()
         {
+            DarkMode.BeforeWindowCreation();
             InitializeComponent();
-            ViewModel = new ViewModel();
+            DarkMode.AfterWindowCreation(new WindowInteropHelper(this).Handle);
+            ViewModel = new MainViewModel();
             DataContext = ViewModel;
-        }
-
-        void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            DataGrid grid = sender as DataGrid;
-            
-            if (grid.SelectedItem != null)
-            {
-                Item item = grid.SelectedItem as Item;
-                Process.Start("explorer.exe", "/n, /select, \"" + Path.Combine(item.Directory, item.Name) + "\"");
-            }
         }
 
         void DataGrid_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -57,9 +51,9 @@ namespace EverythingNET
 
         void ShowMenu(Point screenPos)
         {
-            if (DG.SelectedItem != null)
+            if (MainDataGrid.SelectedItem != null)
             {
-                Item item = DG.SelectedItem as Item;
+                Item item = MainDataGrid.SelectedItem as Item;
                 string file = Path.Combine(item.Directory, item.Name);
 
                 if (File.Exists(file))
@@ -82,18 +76,22 @@ namespace EverythingNET
             base.OnKeyDown(e);
 
             if (e.Key == Key.Escape)
-                Close();
+            {
+                if (SearchTextBox.Text != "")
+                    SearchTextBox.Text = "";
+                else
+                    Close();
+            }
 
             if (e.Key == Key.F1)
             {
-                using (var proc = Process.GetCurrentProcess())
-                {
-                    string txt = "Everything.NET\n\nCopyright (C) 2020 Frank Skare (stax76)\n\nVersion " +
-                        FileVersionInfo.GetVersionInfo(proc.MainModule.FileName).FileVersion.ToString() +
-                        "\n\n" + "MIT License";
+                using var proc = Process.GetCurrentProcess();
 
-                    MessageBox.Show(txt);
-                }
+                string txt = "Everything.NET\n\nCopyright (C) 2020-2021 Frank Skare (stax76)\n\nVersion " +
+                    FileVersionInfo.GetVersionInfo(proc.MainModule.FileName).FileVersion.ToString() +
+                    "\n\n" + "MIT License";
+
+                MessageBox.Show(txt);
             }
         }
 
@@ -118,28 +116,28 @@ namespace EverythingNET
                 }
             }
 
-            if (DG.Items.Count > 0)
+            if (MainDataGrid.Items.Count > 0)
             {
                 if (e.Key == Key.Up)
                 {
-                    int index = DG.SelectedIndex;
+                    int index = MainDataGrid.SelectedIndex;
                     index--;
 
                     if (index < 0)
                         index = 0;
 
-                    DG.SelectedIndex = index;
+                    MainDataGrid.SelectedIndex = index;
                 }
 
                 if (e.Key == Key.Down)
                 {
-                    int index = DG.SelectedIndex;
+                    int index = MainDataGrid.SelectedIndex;
                     index++;
 
-                    if (index > DG.Items.Count - 1)
-                        index = DG.Items.Count - 1;
+                    if (index > MainDataGrid.Items.Count - 1)
+                        index = MainDataGrid.Items.Count - 1;
 
-                    DG.SelectedIndex = index;
+                    MainDataGrid.SelectedIndex = index;
                 }
             }
 
@@ -173,7 +171,7 @@ namespace EverythingNET
         void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             NameColumn.Width = ActualWidth * 0.25;
-            DirectoryColumn.Width = ActualWidth * 0.5;
+            DirectoryColumn.Width = ActualWidth * 0.49;
         }
 
         void Window_Loaded(object sender, RoutedEventArgs e)
@@ -185,11 +183,12 @@ namespace EverythingNET
         void SearchTextBox_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             SearchTextBox.Text = Clipboard.GetText();
+            SearchTextBox.SelectionStart = SearchTextBox.Text.Length;
         }
 
         void SearchTextBox_PreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
-            SearchTextBox.SelectionStart = SearchTextBox.Text.Length;
+            e.Handled = true;
         }
     }
 }
