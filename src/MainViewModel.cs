@@ -3,31 +3,35 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls.Primitives;
 
 namespace EverythingNET
 {
     class MainViewModel : ViewModelBase
     {
-        public Command ShowInExplorerCommand { get; }
-        public Command ShowHelpCommand { get; }
-        public Command ShowContextMenuCommand { get; }
-
+        public RecentTextInputManager RecentSearchManager { get; set; }
         TypeAssistant TypeAssistant;
+
+        public Command ShowAboutCommand { get; }
+        public Command ShowHelpCommand { get; }
+        public Command ShowInExplorerCommand { get; }
+        public Command SearchTextBoxMenuCommand { get; }
 
         public MainViewModel()
         {
             TypeAssistant = new TypeAssistant();
             TypeAssistant.Idled += TypeAssistant_Idled;
 
-            ShowInExplorerCommand = new Command(ShowInExplorer);
+            RecentSearchManager = new RecentTextInputManager(App.Settings.RecentSearches);
+
+            ShowAboutCommand = new Command(ShowAbout);
             ShowHelpCommand = new Command(ShowHelp);
-            ShowContextMenuCommand = new Command(ShowContextMenu);
+            ShowInExplorerCommand = new Command(ShowInExplorer);
+            SearchTextBoxMenuCommand = new Command(SearchTextBoxMenuCommandHandler);
         }
 
-        private Item _SelectedItem;
+        private EverythingItem _SelectedItem;
 
-        public Item SelectedItem {
+        public EverythingItem SelectedItem {
             get => _SelectedItem;
             set {
                 _SelectedItem = value;
@@ -35,9 +39,9 @@ namespace EverythingNET
             }
         }
 
-        private List<Item> _Items;
+        private List<EverythingItem> _Items;
 
-        public List<Item> Items {
+        public List<EverythingItem> Items {
             get => _Items;
             set {
                 _Items = value;
@@ -45,13 +49,15 @@ namespace EverythingNET
             }
         }
 
-        string SearchTextValue;
+        string _SearchText;
 
         public string SearchText {
-            get => SearchTextValue;
+            get => _SearchText;
             set {
-                SearchTextValue = value;
+                _SearchText = value;
+                OnPropertyChanged();
                 TypeAssistant.TextChanged(value);
+                RecentSearchManager.Push(value);
             }
         }
 
@@ -62,7 +68,7 @@ namespace EverythingNET
 
         public void Update()
         {
-            List<Item> items = Model.GetItems(SearchText);
+            List<EverythingItem> items = Everything.GetItems(SearchText);
 
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -91,6 +97,11 @@ namespace EverythingNET
             Process.Start("explorer.exe", "/n, /select, \"" + path + "\"");
         }
 
+        void SearchTextBoxMenuCommandHandler(object param)
+        {
+            SearchText = param.ToString();
+        }
+
         void ShowHelp(object param)
         {
             var info = new ProcessStartInfo() {
@@ -100,12 +111,15 @@ namespace EverythingNET
             Process.Start(info).Dispose();
         }
 
-        void ShowContextMenu(object param)
+        void ShowAbout(object param)
         {
-            var cm = (param as FrameworkElement).ContextMenu;
-            cm.Placement = PlacementMode.Bottom;
-            cm.PlacementTarget = param as UIElement;
-            cm.IsOpen = true;
+            using var proc = Process.GetCurrentProcess();
+
+            string txt = "Everything.NET\n\nCopyright (C) 2020-2021 Frank Skare (stax76)\n\nVersion " +
+                FileVersionInfo.GetVersionInfo(proc.MainModule.FileName).FileVersion.ToString() +
+                "\n\n" + "MIT License";
+
+            MessageBox.Show(txt);
         }
     }
 }

@@ -22,19 +22,17 @@ https://github.com/stax76/Everything.NET/releases
 
 ### Usage
 
-ESC key closes the app.
-
-Up key restores the search text from the last session.
+ESC key clears the search box, if empty the app exits.
 
 Double-click shows the file in File Explorer.
 
-Right-click opens the files native shell context menu.
+Right-click and menu key opens the files native shell context menu.
 
-F1 key shows the about dialog.
+Right-click in the search box shows a context menu with the most recent searches.
+
+F1 key shows the usage section of the readme page.
 
 Up/Down key navigates the main list.
-
-Shift+F10 or Menu key show the context menu.
 
 
 ### Syntax

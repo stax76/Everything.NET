@@ -1,12 +1,13 @@
 ﻿
 using System;
-using System.ComponentModel;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -17,16 +18,13 @@ namespace EverythingNET
 {
     public partial class View : Window
     {
-        public RoutedCommand SettingsCommand { get; } = new RoutedCommand();
-        public RoutedCommand ShowMenuCommand { get; } = new RoutedCommand();
-
         MainViewModel ViewModel;
 
         public View()
         {
-            DarkMode.BeforeWindowCreation();
+            ShellDarkMode.BeforeWindowCreation();
             InitializeComponent();
-            DarkMode.AfterWindowCreation(new WindowInteropHelper(this).Handle);
+            ShellDarkMode.AfterWindowCreation(new WindowInteropHelper(this).Handle);
             ViewModel = new MainViewModel();
             DataContext = ViewModel;
         }
@@ -53,7 +51,7 @@ namespace EverythingNET
         {
             if (MainDataGrid.SelectedItem != null)
             {
-                Item item = MainDataGrid.SelectedItem as Item;
+                EverythingItem item = MainDataGrid.SelectedItem as EverythingItem;
                 string file = Path.Combine(item.Directory, item.Name);
 
                 if (File.Exists(file))
@@ -82,40 +80,10 @@ namespace EverythingNET
                 else
                     Close();
             }
-
-            if (e.Key == Key.F1)
-            {
-                using var proc = Process.GetCurrentProcess();
-
-                string txt = "Everything.NET\n\nCopyright (C) 2020-2021 Frank Skare (stax76)\n\nVersion " +
-                    FileVersionInfo.GetVersionInfo(proc.MainModule.FileName).FileVersion.ToString() +
-                    "\n\n" + "MIT License";
-
-                MessageBox.Show(txt);
-            }
-        }
-
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            base.OnClosing(e);
-
-            if (!string.IsNullOrEmpty(ViewModel.SearchText))
-                RegistryHelp.SetValue(RegistryHelp.ApplicationKey, "LastText", ViewModel.SearchText);
         }
 
         void SearchTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Up && SearchTextBox.Text == "")
-            {
-                string last = RegistryHelp.GetString(RegistryHelp.ApplicationKey, "LastText");
-
-                if (!string.IsNullOrEmpty(last))
-                {
-                    SearchTextBox.Text = last;
-                    SearchTextBox.CaretIndex = 1000;
-                }
-            }
-
             if (MainDataGrid.Items.Count > 0)
             {
                 if (e.Key == Key.Up)
@@ -142,24 +110,7 @@ namespace EverythingNET
             }
 
             if (e.Key == Key.Apps)
-            {
-                Application.Current.Dispatcher.InvokeAsync(() => {
-                    ShowMenu(PointToScreen(new Point(0d, 0d)));
-                });
-            }
-        }
-
-        IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-        {
-            // WM_SYSKEYDOWN
-            if (msg == 0x104 && (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)))
-            {
-                Application.Current.Dispatcher.InvokeAsync(() => {
-                    ShowMenu(PointToScreen(new Point(0d, 0d)));
-                });
-            }
-
-            return IntPtr.Zero;
+                ShowMenu(PointToScreen(new Point(0d, 0d)));
         }
 
         void Window_Activated(object sender, EventArgs e)
@@ -174,21 +125,40 @@ namespace EverythingNET
             DirectoryColumn.Width = ActualWidth * 0.49;
         }
 
-        void Window_Loaded(object sender, RoutedEventArgs e)
+        void Window_Closed(object sender, EventArgs e)
         {
-            HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
-            source.AddHook(new HwndSourceHook(WndProc));
+            App.Settings.RecentSearches = ViewModel.RecentSearchManager.Items.Take(10).ToArray();
+            SettingsManager.Save(App.Settings);
         }
 
-        void SearchTextBox_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        void SearchTextBox_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
-            SearchTextBox.Text = Clipboard.GetText();
-            SearchTextBox.SelectionStart = SearchTextBox.Text.Length;
+            List<string> l = new List<string>();
+            string txt = Clipboard.GetText();
+
+            if (!string.IsNullOrEmpty(txt) && !txt.Contains("\n"))
+                l.Add(txt);
+
+            l.AddRange(ViewModel.RecentSearchManager.Items);
+            InputContextMenu.ItemsSource = l.Take(10);
         }
 
-        void SearchTextBox_PreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        void MainMenuTextBlock_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            e.Handled = true;
+            MainContextMenu.IsOpen = true;
+        }
+
+        void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            var mod = e.KeyboardDevice.Modifiers;
+
+            if (e.Key == Key.F2 && mod == ModifierKeys.None)
+            {
+                var cm = MainContextMenu;
+                cm.Placement = PlacementMode.Bottom;
+                cm.PlacementTarget = MainMenuTextBlock;
+                cm.IsOpen = true;
+            }
         }
     }
 }

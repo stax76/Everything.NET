@@ -12,23 +12,20 @@
     Title="Everything.NET"
     Height="450"
     Width="800"
+    Name="MainWindow"
     WindowStartupLocation="CenterScreen"
     Activated="Window_Activated"
     SizeChanged="Window_SizeChanged"
-    Loaded="Window_Loaded">
+    Closed="Window_Closed"
+    >
 
     <Window.Resources>
         <local:SizeConverter x:Key="SizeConverter" />
+        <local:BindingProxy x:Key="BindingProxy" Data="{Binding}" />
     </Window.Resources>
 
     <Window.InputBindings>
         <KeyBinding Gesture="F1" Command="{Binding ShowHelpCommand}"/>
-        
-        <KeyBinding
-            Gesture="F10"
-            Command="{Binding ShowContextMenuCommand}"
-            CommandParameter="{Binding ElementName=MainMenuTextBlock}"
-            />
     </Window.InputBindings>
     
     <Grid FocusManager.FocusedElement="{Binding ElementName=SearchTextBox}">
@@ -45,12 +42,21 @@
             Padding="2"
             FontSize="14"
             Grid.Row="1"
-            ContextMenu="{x:Null}"
             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
             PreviewKeyDown="SearchTextBox_PreviewKeyDown"
-            PreviewMouseRightButtonDown="SearchTextBox_PreviewMouseRightButtonDown"
-            PreviewMouseRightButtonUp="SearchTextBox_PreviewMouseRightButtonUp"
+            ContextMenuOpening="SearchTextBox_ContextMenuOpening"
             >
+
+            <TextBox.ContextMenu>
+                <ContextMenu Name="InputContextMenu">
+                    <ContextMenu.ItemContainerStyle>
+                        <Style TargetType="MenuItem">
+                            <Setter Property="Command" Value="{Binding Path=DataContext.SearchTextBoxMenuCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+                            <Setter Property="CommandParameter" Value="{Binding}"/>
+                        </Style>
+                    </ContextMenu.ItemContainerStyle>
+                </ContextMenu>
+            </TextBox.ContextMenu>
         </TextBox>
 
         <TextBlock
@@ -62,22 +68,20 @@
             HorizontalAlignment="Right"
             Margin="0,0,10,0"
             Grid.Row="2"
+            MouseLeftButtonDown="MainMenuTextBlock_MouseLeftButtonDown"
             >
 
-            <TextBlock.InputBindings>
-                <MouseBinding
-                    Command="{Binding ShowContextMenuCommand}"
-                    CommandParameter="{Binding ElementName=MainMenuTextBlock}"
-                    MouseAction="LeftClick"
-                    />
-            </TextBlock.InputBindings>
-
             <TextBlock.ContextMenu>
-                <ContextMenu>
+                <ContextMenu Name="MainContextMenu">
                     <MenuItem
                         Header="Help"
                         InputGestureText="F1"
-                        Command="{Binding ShowHelpCommand}" />
+                        Command="{Binding Data.ShowHelpCommand, Source={StaticResource BindingProxy}}"
+                        />
+                    <MenuItem
+                        Header="About"
+                        Command="{Binding Data.ShowAboutCommand, Source={StaticResource BindingProxy}}"
+                        />
                 </ContextMenu>
             </TextBlock.ContextMenu>
         </TextBlock>

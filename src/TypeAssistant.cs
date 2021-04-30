@@ -6,16 +6,16 @@ public class TypeAssistant
 {
     public event Action<string> Idled;
     string Text;
-    Timer WaitingTimer;
+    Timer Timer;
 
     public TypeAssistant()
     {
-        WaitingTimer = new Timer(p => Idled(Text));
+        Timer = new Timer(p => Idled(Text));
     }
 
     public void TextChanged(string text)
     {
         Text = text;
-        WaitingTimer.Change(500, Timeout.Infinite);
+        Timer.Change(500, Timeout.Infinite);
     }
 }
