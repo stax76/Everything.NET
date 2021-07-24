@@ -232,3 +232,11 @@ $         Matches the end of the filename
 {x,y}     Matches the preceding element between x and y times
 \         Escape special character
 ```
+
+
+Related apps
+------------
+
+Find a list of related apps:
+
+https://stax76.github.io/frankskare
