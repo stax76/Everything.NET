@@ -113,11 +113,11 @@ namespace EverythingNET
                 ShowMenu(PointToScreen(new Point(0d, 0d)));
         }
 
-        void Window_Activated(object sender, EventArgs e)
-        {
-            if (!string.IsNullOrEmpty(ViewModel.SearchText))
-                ViewModel.Update();
-        }
+        //void Window_Activated(object sender, EventArgs e)
+        //{
+        //    if (!string.IsNullOrEmpty(ViewModel.SearchText))
+        //        ViewModel.Update();
+        //}
 
         void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
